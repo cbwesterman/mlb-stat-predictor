@@ -40,6 +40,5 @@ def filter_quality_hitters(df):
         "Pos" : "position"
     })
 
-    # Create useful stat columns
-    filtered_df
+    print(filtered_df.dtypes)
     return filtered_df

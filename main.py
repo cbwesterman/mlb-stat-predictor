@@ -4,11 +4,10 @@ from pathlib import Path
 
 # .py files
 from clean_data import filter_quality_hitters
+from model import create_model_csv
 
 def main():
-    players_df = pd.read_csv("data/mlb_player_stats.csv")
-    players_df = filter_quality_hitters(players_df)
-    players_df.to_csv("data/cleaned_mlb_player_stats.csv", index=False)
+    create_model_csv()
 
 if __name__ == "__main__":
     main()

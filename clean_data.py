@@ -11,7 +11,7 @@ def filter_quality_hitters(df):
     # Keeps necessary columns
     columns_to_keep = ["Player", "Age", "Team", "Lg", "WAR", "G", "PA", "AB", "R", "H", "HR", "RBI", "SB", "BB", "SO", "OBP", "SLG", "OPS", 
     "OPS+", "TB", "SH", "SF", "Pos"]
-    filtered_df = df[columns_to_keep]
+    filtered_df = filtered_df[columns_to_keep]
 
     # Rename columns for clarity
     filtered_df = filtered_df.rename(columns={
@@ -40,5 +40,4 @@ def filter_quality_hitters(df):
         "Pos" : "position"
     })
 
-    print(filtered_df.dtypes)
     return filtered_df

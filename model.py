@@ -1,36 +1,35 @@
 import pandas as pd
 
-from clean_data import filter_quality_hitters
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-def create_model_csv():
-    players_df = pd.read_csv("data/mlb_player_stats.csv")
-    players_df = filter_quality_hitters(players_df)
-
-    target = "on_base_plus_slugging_percentage"
-    features = [
-        "war",
-        "plate_appearances",
-        "runs",
-        "hits",
-        "homeruns",
-        "runs_batted_in",
-        "bases_on_balls",
-        "strikeouts",
-        "slugging_percentage",
-        "total_bases",
-        "sacrifice_hits",
-        "sacrifice_flys"
-    ]
-
-    X = players_df[features]
-    y = players_df[target]
-
-    players_df.to_csv("data/ml_ready_player_stats.csv", index=False)
-
+def create_model(X, y):
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
         test_size=0.2,
         random_state=42
-)
+    )
+
+    model = LinearRegression()
+
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+
+    results = pd.DataFrame({
+        "Actual OPS": y_test,
+        "Predicted OPS": y_pred
+    })
+
+    print(results.head(10))
+
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    print("MAE:", mae)
+    print("MSE:", mse)
+    print("R²:", r2)

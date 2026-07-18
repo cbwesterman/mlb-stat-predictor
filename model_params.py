@@ -3,10 +3,15 @@ import numpy as np
 
 from clean_data import filter_quality_hitters
 
-def create_model_params(df):
-    players_df = filter_quality_hitters(df)
+def create_model_params(present_df, future_df):
+    present_df, future_df = filter_quality_hitters(present_df, future_df)
+    model_df = present_df.merge(
+        future_df,
+        on="player",
+        how="inner"
+    )
 
-    target = "on_base_plus_slugging_percentage"
+    target = "ops_future"
     features = [
         "war",
         "plate_appearances",
@@ -21,8 +26,8 @@ def create_model_params(df):
         "sacrifice_flys"
     ]
 
-    X = players_df[features]
-    y = players_df[target]
-    players_df.to_csv("data/model.csv", index=False)
+    X = model_df[features]
+    y = model_df[target]
+    model_df.to_csv("data/model.csv", index=False)
 
     return X, y

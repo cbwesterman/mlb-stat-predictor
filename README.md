@@ -23,3 +23,4 @@ A Python sports analytics project using MLB hitter statistics to analyze player 
 - Create a `next_season_ops` target column.
 - Train on earlier seasons and test on later seasons.
 - Compare different models and feature sets.
+- Make single game predictions on stats like hits, rbis, hrs.

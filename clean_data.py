@@ -1,52 +1,30 @@
 import pandas as pd
 
-# the total games played by a MLB to calculate a qualified hitter
-total_games_played = 82
+def clean_data(df):
 
-def filter_quality_hitters(present_df, future_df):
+    pa_df = df[df["events"].notna()].copy()
 
-    # Removes non-qualified hitters
-    present_df = present_df[present_df["PA"] >= total_games_played * 3.1]
-    future_df = future_df[future_df["PA"] >= total_games_played * 3.1]
+    daily_df = (
+        pa_df.groupby(["game_date", "game_pk", "player_name", "batter"])
+        .agg(
+            plate_appearances=("events", "count"),
+            hits=("events", lambda x: x.isin(["single", "double", "triple", "home_run"]).sum()),
+            singles=("events", lambda x: (x == "single").sum()),
+            doubles=("events", lambda x: (x == "double").sum()),
+            triples=("events", lambda x: (x == "triple").sum()),
+            home_runs=("events", lambda x: (x == "home_run").sum()),
+            strikeouts=("events", lambda x: (x == "strikeout").sum())
+        )
+        .reset_index()
+    )
 
-    # Keeps necessary columns
-    present_cols = ["Player", "Age", "Team", "Lg", "WAR", "G", "PA", "AB", "R", "H", "HR", "RBI", "SB", "BB", "SO", "OBP", "SLG", "OPS", 
-    "OPS+", "TB", "SH", "SF", "Pos"]
-    present_df = present_df[present_cols]
+    daily_df["total_bases"] = (
+        daily_df["singles"]
+        + 2 * daily_df["doubles"]
+        + 3 * daily_df["triples"]
+        + 4 * daily_df["home_runs"]
+    )
 
-    future_cols = ["Player", "OPS"]
-    future_df = future_df[future_cols]
+    daily_df["target_hit"] = (daily_df["hits"] >= 1).astype(int)
 
-    # Rename columns for clarity
-    present_df = present_df.rename(columns={
-        "Player" : "player",
-        "Age" : "age",
-        "Team" : "team",
-        "Lg" : "league",
-        "WAR" : "war",
-        "G" : "games",
-        "PA" : "plate_appearances",
-        "AB" : "at_bats",
-        "R" : "runs",
-        "H" : "hits",
-        "HR" : "homeruns",
-        "RBI" : "runs_batted_in",
-        "SB" : "stolen_bases",
-        "BB" : "bases_on_balls",
-        "SO" : "strikeouts",
-        "OBP" : "on_base_percentage",
-        "SLG" : "slugging_percentage",
-        "OPS" : "ops_present", 
-        "OPS+" : "adjusted_on_base_plus_slugging_percentage",
-        "TB" : "total_bases",
-        "SH" : "sacrifice_hits",
-        "SF" : "sacrifice_flys",
-        "Pos" : "position"
-    })
-
-    future_df = future_df.rename(columns={
-        "Player" : "player",
-        "OPS" : "ops_future"
-    })
-
-    return present_df, future_df
+    return daily_df

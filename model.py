@@ -1,56 +1,48 @@
-import pandas as pd
-
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 
-def create_model(X, y):
-    
+def build_model(df):
+
+    features = [
+        "hits_last_7",
+        "pa_last_7",
+        "strikeouts_last_7",
+        "total_bases_last_7",
+        "hit_rate_last_7",
+        "strikeout_rate_last_7",
+        "total_bases_per_game_last_7"
+    ]
+
+    target = "target_hit"
+
+    X = df[features].copy()
+    y = df[target].copy()
+
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
         test_size=0.2,
-        random_state=42
+        random_state=42,
+        stratify=y
     )
 
-    lr_model = LinearRegression()
+    model = LogisticRegression(max_iter=1000)
 
-    lr_model.fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
-    y_pred = lr_model.predict(X_test)
+    y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test)[:, 1]
 
-    lr_results = pd.DataFrame({
-        "Actual OPS": y_test,
-        "Predicted OPS": y_pred
-    })
+    print("Logistic Regression Results")
+    print("Accuracy:", accuracy_score(y_test, y_pred))
+    print("Precision:", precision_score(y_test, y_pred))
+    print("Recall:", recall_score(y_test, y_pred))
+    print("ROC-AUC:", roc_auc_score(y_test, y_prob))
 
-    print(lr_results.head(10))
+    results_df = X_test.copy()
+    results_df["actual_hit"] = y_test
+    results_df["predicted_hit"] = y_pred
+    results_df["predicted_probability"] = y_prob
 
-    mae = mean_absolute_error(y_test, y_pred)
-    mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
-
-    print("LR_MAE:", mae)
-    print("LR_MSE:", mse)
-    print("LR_R²:", r2)
-
-    rf_model = RandomForestRegressor(
-        n_estimators=200,
-        random_state=42
-    )
-
-    rf_model.fit(X_train, y_train)
-
-    y_pred = rf_model.predict(X_test)
-
-    rf_results = pd.DataFrame({
-        "Actual OPS": y_test,
-        "Predicted OPS": y_pred
-    })
-
-    print(rf_results.head(10))
-
-    print("MAE:", mean_absolute_error(y_test, y_pred))
-    print("MSE:", mean_squared_error(y_test, y_pred))
-    print("R²:", r2_score(y_test, y_pred))
+    return model, results_df

@@ -10,6 +10,8 @@ A Python sports analytics project using MLB hitter statistics to analyze player 
 - Found that some features caused data leakage because they were too directly related to OPS.
 - Removed direct OPS-related features to make the model more realistic.
 - Exported cleaned/model data to CSV files for debugging.
+- Tested LR model vs a baseline model.
+- Used one player for initial testing and learning.
 
 ## What I've Learned
 - How to split data into features (`X`) and a target (`y`).
@@ -17,6 +19,7 @@ A Python sports analytics project using MLB hitter statistics to analyze player 
 - How to evaluate predictions against actual values.
 - Why data leakage can make a model look more accurate than it really is.
 - Why future prediction should use past-season stats to predict next-season performance.
+- How to use a baseline model to test accuracy and precision.
 
 ## Next Steps
 - Combine multiple seasons of batting data.

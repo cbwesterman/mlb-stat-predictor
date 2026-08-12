@@ -7,15 +7,14 @@ from pybaseball import statcast_batter
 from clean_data import clean_data
 from features import build_features
 from model import build_model
+from get_team_data import get_team_data, PIRATES_HITTER_IDS
 
 def main():
 
-    ply_lookup = playerid_lookup("reynolds", "bryan")
-    ply_id = ply_lookup.iloc[0]["key_mlbam"]
-    data = statcast_batter(
+    data = get_team_data(
         "2026-03-25",
-        "2026-07-26",
-        player_id=ply_id
+        "2026-08-08",
+        PIRATES_HITTER_IDS
     )
 
     data.to_csv("data/api_output.csv", index=False)

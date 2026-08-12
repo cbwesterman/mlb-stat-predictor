@@ -1,5 +1,6 @@
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 
 def build_model(df):
@@ -27,6 +28,21 @@ def build_model(df):
         stratify=y
     )
 
+    # Baseline
+    baseline = DummyClassifier(strategy="most_frequent")
+    
+    baseline.fit(X_train, y_train)
+    
+    baseline_pred = baseline.predict(X_test)
+    baseline_prob = baseline.predict_proba(X_test)[:, 1]
+    
+    print("Baseline Results")
+    print("Accuracy:", accuracy_score(y_test, baseline_pred))
+    print("Precision:", precision_score(y_test, baseline_pred, zero_division=0))
+    print("Recall:", recall_score(y_test, baseline_pred, zero_division=0))
+    print("ROC-AUC:", roc_auc_score(y_test, baseline_prob))
+
+    # LR Model
     model = LogisticRegression(max_iter=1000)
 
     model.fit(X_train, y_train)

@@ -18,9 +18,10 @@ def main():
     )
 
     data.to_csv("data/api_output.csv", index=False)
-    filtered_data = clean_data(data)
-    filtered_data.to_csv("data/filtered_output.csv", index=False)
-    features_data = build_features(filtered_data)
+    pa_df, daily_df = clean_data(data)
+    pa_df.to_csv("data/pa_output.csv", index=False)
+    daily_df.to_csv("data/daily_output.csv", index=False)
+    features_data = build_features(pa_df, daily_df)
     features_data.to_csv("data/features_output.csv", index=False)
 
     model, results_df = build_model(features_data)

@@ -3,19 +3,21 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 
-def build_model(df):
 
+def build_model(df):
     features = [
-        "hits_last_7",
-        "pa_last_7",
-        "strikeouts_last_7",
-        "total_bases_last_7",
-        "hit_rate_last_7",
-        "strikeout_rate_last_7",
+        "hits_last_7_games",
+        "pa_last_7_games",
+        "strikeouts_last_7_games",
+        "walks_last_7_games",
+        "total_bases_last_7_games",
+        "hit_rate_last_7_games",
+        "strikeout_rate_last_7_games",
+        "walk_rate_last_7_games",
         "total_bases_per_game_last_7"
     ]
 
-    target = "target_hit"
+    target = "hit"
 
     X = df[features].copy()
     y = df[target].copy()
@@ -28,23 +30,19 @@ def build_model(df):
         stratify=y
     )
 
-    # Baseline
     baseline = DummyClassifier(strategy="most_frequent")
-    
     baseline.fit(X_train, y_train)
-    
+
     baseline_pred = baseline.predict(X_test)
     baseline_prob = baseline.predict_proba(X_test)[:, 1]
-    
+
     print("Baseline Results")
     print("Accuracy:", accuracy_score(y_test, baseline_pred))
     print("Precision:", precision_score(y_test, baseline_pred, zero_division=0))
     print("Recall:", recall_score(y_test, baseline_pred, zero_division=0))
     print("ROC-AUC:", roc_auc_score(y_test, baseline_prob))
 
-    # LR Model
     model = LogisticRegression(max_iter=1000)
-
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
@@ -52,8 +50,8 @@ def build_model(df):
 
     print("Logistic Regression Results")
     print("Accuracy:", accuracy_score(y_test, y_pred))
-    print("Precision:", precision_score(y_test, y_pred))
-    print("Recall:", recall_score(y_test, y_pred))
+    print("Precision:", precision_score(y_test, y_pred, zero_division=0))
+    print("Recall:", recall_score(y_test, y_pred, zero_division=0))
     print("ROC-AUC:", roc_auc_score(y_test, y_prob))
 
     results_df = X_test.copy()

@@ -4,29 +4,15 @@ from pybaseball import playerid_lookup
 from pybaseball import statcast_batter
 
 # .py files
+from get_team_data import PIRATES_HITTERS, create_team_df
 from clean_data import clean_data
-from features import build_features
-from model import build_model
-from get_team_data import get_team_data, PIRATES_HITTER_IDS
 
 def main():
+    team_df = create_team_df(PIRATES_HITTERS)
+    team_df.to_csv("data/api_output.csv", index=False)
 
-    data = get_team_data(
-        "2026-03-25",
-        "2026-08-08",
-        PIRATES_HITTER_IDS
-    )
-
-    data.to_csv("data/api_output.csv", index=False)
-    filtered_data = clean_data(data)
-    filtered_data.to_csv("data/filtered_output.csv", index=False)
-    features_data = build_features(filtered_data)
-    features_data.to_csv("data/features_output.csv", index=False)
-
-    model, results_df = build_model(features_data)
-    results_df.to_csv("data/model_output.csv", index=False)
-
-    print(results_df.head())
+    team_df = clean_data(team_df)
+    team_df.to_csv("data/cleaned_output.csv", index=False)
 
 if __name__ == "__main__":
     main()

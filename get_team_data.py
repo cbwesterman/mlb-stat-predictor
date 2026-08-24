@@ -1,19 +1,20 @@
 import pandas as pd
 from pybaseball import playerid_lookup, statcast_batter
 
+
 PIRATES_HITTERS = [
-    ("Horwitz", "Spencer"),
-    ("Lowe", "Brandon"),
-    ("Reynolds", "Bryan"),
-    ("Valdez", "Esmerlyn"),
-    ("Cruz", "Oneil"),
-    ("Gonzales", "Nick"),
-    ("Gonzalez", "Jacob"),
-    ("Triolo", "Jared"),
-    ("Davis", "Henry")
+    #("Horwitz", "Spencer"),
+    #("Lowe", "Brandon"),
+    ("Reynolds", "Bryan")
+    #("Valdez", "Esmerlyn"),
+    #("Cruz", "Oneil"),
+    #("Gonzales", "Nick"),
+    #("Gonzalez", "Jacob"),
+    #("Triolo", "Jared"),
+    #("Davis", "Henry")
 ]
 
-def create_team_df(player_names):
+def create_team_df(player_names, start_date, end_date):
     team_df = pd.DataFrame()
 
     for player_name in player_names:
@@ -26,8 +27,8 @@ def create_team_df(player_names):
         player_id = player.iloc[0]["key_mlbam"]
 
         player_df = statcast_batter(
-            "2026-03-25",
-            "2026-08-19",
+            start_date,
+            end_date,
             player_id
         )
 

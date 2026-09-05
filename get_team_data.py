@@ -3,15 +3,15 @@ from pybaseball import playerid_lookup, statcast_batter
 
 
 PIRATES_HITTERS = [
-    #("Horwitz", "Spencer"),
-    #("Lowe", "Brandon"),
-    ("Reynolds", "Bryan")
-    #("Valdez", "Esmerlyn"),
-    #("Cruz", "Oneil"),
-    #("Gonzales", "Nick"),
-    #("Gonzalez", "Jacob"),
-    #("Triolo", "Jared"),
-    #("Davis", "Henry")
+    ("Horwitz", "Spencer"),
+    ("Lowe", "Brandon"),
+    ("Reynolds", "Bryan"),
+    ("Valdez", "Esmerlyn"),
+    ("Cruz", "Oneil"),
+    ("Gonzales", "Nick"),
+    ("Gonzalez", "Jacob"),
+    ("Triolo", "Jared"),
+    ("Davis", "Henry")
 ]
 
 def create_team_df(player_names, start_date, end_date):

@@ -5,51 +5,34 @@ def clean_data(df):
     team_df = team_df[team_df["events"].notna()]
 
     columns_to_keep = [
-        "pitch_type",
         "game_date",
-        "release_speed",
+        "game_pk",
+        "events",
         "player_name",
         "batter",
-        "pitcher",
-        "events",
-        "spin_dir",
         "game_type",
-        "p_throws",
         "home_team",
         "away_team",
-        "hit_distance_sc",
-        "launch_speed",
-        "launch_angle",
-        "effective_speed",
-        "release_spin_rate",
-        "game_pk",
-        "estimated_ba_using_speedangle",
-        "estimated_woba_using_speedangle",
-        "woba_value",
-        "woba_denom",
-        "delta_home_win_exp",
-        "delta_run_exp",
-        "estimated_slg_using_speedangle",
-        "delta_pitcher_run_exp",
-        "home_win_exp",
-        "bat_win_exp",
+        "pitcher",
+        "p_throws",
         "pitcher_days_since_prev_game",
         "batter_days_since_prev_game"
     ]
 
     team_df = team_df[columns_to_keep]
+    team_df = team_df[team_df["game_type"] == "R"]
 
-    team_df = pd.get_dummies(
-        team_df,
-        columns=["pitch_type"],
-        prefix="pitch",
-        dtype=int
-    )
 
-    team_df = pd.get_dummies(
-        team_df,
-        columns=["p_throws"],
-        prefix="p_throws",
-        dtype=int
+    daily_df = (
+        team_df.groupby(["game_date", "game_pk", "player_name", "batter"])
+        .agg(
+            plate_appearances=("events", "count"),
+            hits=("events", lambda x: x.isin(["single", "double", "triple", "home_run"]).sum()),
+            starting_pitcher_id=("pitcher", "first"),
+            starting_pitcher_hand=("p_throws", "first"),
+            starting_pitcher_rest_days=("pitcher_days_since_prev_game", "first"),
+            batter_rest_days=("batter_days_since_prev_game", "first")
+        )
+        .reset_index()
     )
-    return team_df
+    return daily_df

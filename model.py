@@ -15,7 +15,9 @@ def build_model(df):
         "opp_k_rate_last_5",
         "batter_rest_days",
         "starting_pitcher_rest_days",
-        "starting_pitcher_hand_L"
+        "starting_pitcher_hand_L",
+        "hit_rate_vs_L_last_7",
+        "hit_rate_vs_R_last_7"
     ]
 
     model_df = model_df.dropna(subset=model_features)

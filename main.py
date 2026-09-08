@@ -20,10 +20,13 @@ def main():
     team_df = clean_data(team_df)
     team_df.to_csv("data/cleaned_output.csv", index=False)
 
-    team_df = add_pitcher_stats(team_df, START_DATE, END_DATE)
-    team_df.to_csv("data/pitcher_stats_output.csv", index=False)
+    #team_df = add_pitcher_stats(team_df, START_DATE, END_DATE)
+    #team_df.to_csv("data/pitcher_stats_output.csv", index=False)
 
-    team_df = add_hitter_stats(team_df)
+    #team_df = add_hitter_stats(team_df)
+    # test line
+    team_df = add_hitter_stats(pd.read_csv("data/pitcher_stats_output.csv"))
+    # test line
     team_df.to_csv("data/hitter_stats_output.csv", index=False)
 
     team_df = prep_for_model(team_df)

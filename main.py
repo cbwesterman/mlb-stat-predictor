@@ -2,6 +2,7 @@
 import pandas as pd
 from pybaseball import playerid_lookup
 from pybaseball import statcast_batter
+import joblib
 
 # .py files
 from get_team_data import PIRATES_HITTERS, create_team_df
@@ -13,19 +14,19 @@ from model import build_model
 
 def main():
     START_DATE = "2026-03-25"
-    END_DATE = "2026-09-04"
+    END_DATE = "2026-09-24"
     team_df = create_team_df(PIRATES_HITTERS, START_DATE, END_DATE)
     team_df.to_csv("data/api_output.csv", index=False)
 
     team_df = clean_data(team_df)
     team_df.to_csv("data/cleaned_output.csv", index=False)
 
-    #team_df = add_pitcher_stats(team_df, START_DATE, END_DATE)
-    #team_df.to_csv("data/pitcher_stats_output.csv", index=False)
+    team_df = add_pitcher_stats(team_df, START_DATE, END_DATE)
+    team_df.to_csv("data/pitcher_stats_output.csv", index=False)
 
-    #team_df = add_hitter_stats(team_df)
+    team_df = add_hitter_stats(team_df)
     # test line
-    team_df = add_hitter_stats(pd.read_csv("data/pitcher_stats_output.csv"))
+    # team_df = add_hitter_stats(pd.read_csv("data/pitcher_stats_output.csv"))
     # test line
     team_df.to_csv("data/hitter_stats_output.csv", index=False)
 
@@ -34,6 +35,8 @@ def main():
 
     poisson_model, rf_model, results_df = build_model(team_df)
     results_df.to_csv("data/model_output.csv", index=False)
+    joblib.dump(poisson_model, "poisson_model.pkl")
+    joblib.dump(rf_model, "rf_model.pkl")
 
 if __name__ == "__main__":
     main()

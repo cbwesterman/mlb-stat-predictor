@@ -14,7 +14,7 @@ from model import build_model
 
 def main():
     START_DATE = "2026-03-25"
-    END_DATE = "2026-09-24"
+    END_DATE = "2026-09-23"
     team_df = create_team_df(PIRATES_HITTERS, START_DATE, END_DATE)
     team_df.to_csv("data/api_output.csv", index=False)
 
@@ -25,9 +25,6 @@ def main():
     team_df.to_csv("data/pitcher_stats_output.csv", index=False)
 
     team_df = add_hitter_stats(team_df)
-    # test line
-    # team_df = add_hitter_stats(pd.read_csv("data/pitcher_stats_output.csv"))
-    # test line
     team_df.to_csv("data/hitter_stats_output.csv", index=False)
 
     team_df = prep_for_model(team_df)

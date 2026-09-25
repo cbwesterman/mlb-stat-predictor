@@ -3,19 +3,20 @@ from pybaseball import playerid_lookup, statcast_batter
 
 
 PIRATES_HITTERS = [
-    ("Horwitz", "Spencer"),
-    ("Lowe", "Brandon"),
-    ("Reynolds", "Bryan"),
-    ("Valdez", "Esmerlyn"),
     ("Cruz", "Oneil"),
+    ("Griffin", "Konnor"),
+    ("Lowe", "Brandon"),
+    ("O'Hearn", "Ryan"),
     ("Gonzales", "Nick"),
-    ("Gonzalez", "Jacob"),
-    ("Triolo", "Jared"),
+    ("Simon", "Ronny"),
+    ("Horwitz", "Spencer"),
+    ("Mangum", "Jake"),
     ("Davis", "Henry")
 ]
 
 def create_team_df(player_names, start_date, end_date):
     team_df = pd.DataFrame()
+    rows = []
 
     for player_name in player_names:
         last_name, first_name = player_name
@@ -26,6 +27,11 @@ def create_team_df(player_names, start_date, end_date):
 
         player_id = player.iloc[0]["key_mlbam"]
 
+        rows.append({
+            "batter_id": player_id,
+            "player_name": f"{first_name} {last_name}"
+        })
+
         player_df = statcast_batter(
             start_date,
             end_date,
@@ -34,4 +40,6 @@ def create_team_df(player_names, start_date, end_date):
 
         team_df = pd.concat([team_df, player_df], ignore_index=True)
 
+    player_id_df = pd.DataFrame(rows)
+    player_id_df.to_csv("data/lineup_ids.csv", index=False)
     return team_df

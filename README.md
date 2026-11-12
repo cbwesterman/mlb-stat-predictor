@@ -17,14 +17,14 @@ I then shifted the goal from a yes/no hit predictor to something I believe is mo
 **Training pipeline** (run by `main.py`):
 1. `get_team_data.py` - looks up each tracked hitter's MLBAM ID, pulls their raw Statcast data over the season's date range, and saves the lineup IDs to `data/lineup_ids.csv`.
 2. `clean_data.py` - filters to completed plate appearances, aggregates pitch-level data into one row per batter per game, and computes the target (`hits`) along with the starting pitcher's ID and handedness for that game.
-3. `add_pitcher_stats.py` - pulls the same season's data for every opposing starting pitcher faced, and builds rolling opponent-quality features (hit rate and strikeout rate allowed over their trailing 5 starts), merged onto the batter-game rows by pitcher ID and game.
+3. `add_pitcher_stats.py` - pulls the same season's data for every opposing starting pitcher faced, and builds rolling opponent-quality features (hit rate and strikeout rate allowed over their trailing 5 appearances), merged onto the batter-game rows by pitcher ID and game.
 4. `add_hitter_stats.py` - adds rolling batter features over the trailing 7 games: hits, plate appearances, overall hit rate, and platoon splits (hit rate vs. LHP and vs. RHP), computed using only *prior* games to avoid leakage.
 5. `prep_for_model.py` - final encoding step (converting pitcher handedness to a binary feature) right before modeling.
 6. `model.py` - trains and evaluates the models, and `main.py` saves them to `poisson_model.pkl` and `rf_model.pkl`.
 
 **Prediction** (`predict_today.py`):
 1. Finds today's Pirates game and the opponent's probable starting pitcher from the MLB Stats API.
-2. Looks up that pitcher's handedness and builds their trailing-5-start hit and strikeout rates from recent Statcast data.
+2. Looks up that pitcher's handedness and builds their trailing-5-appearance hit and strikeout rates from recent Statcast data.
 3. Builds each tracked hitter's trailing-7-game features from the training data.
 4. Prints predicted hits per hitter from both the Poisson and Random Forest models.
 

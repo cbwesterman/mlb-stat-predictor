@@ -16,11 +16,14 @@ def clean_data(df):
         "pitcher",
         "p_throws",
         "pitcher_days_since_prev_game",
-        "batter_days_since_prev_game"
+        "batter_days_since_prev_game",
+        "at_bat_number"
     ]
 
     team_df = team_df[columns_to_keep]
     team_df = team_df[team_df["game_type"] == "R"]
+
+    team_df = team_df.sort_values(["game_pk", "at_bat_number"])
 
     hit_events = ["single", "double", "triple", "home_run"]
     team_df["is_hit"] = team_df["events"].isin(hit_events).astype(int)

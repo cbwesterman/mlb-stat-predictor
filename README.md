@@ -48,24 +48,26 @@ Evaluated using MAE and Poisson deviance, rather than classification metrics.
 
 ## Results (V1)
 
-Trained on 496 batter-games (through Aug 26, 2026) and tested on 125 later batter-games (Aug 29 - Sep 23, 2026):
+Trained on 499 batter-games (through Aug 29, 2026) and tested on 127 later batter-games (Aug 30 - Sep 23, 2026):
 
 | Model | MAE | Poisson deviance |
 |---|---|---|
-| Naive baseline | 0.697 | - |
-| **Poisson regression** | **0.639** | **0.910** |
-| Random Forest | 0.649 | 0.914 |
+| Naive baseline | 0.746 | - |
+| **Poisson regression** | **0.682** | **0.973** |
+| Random Forest | 0.690 | 0.986 |
 
-- Both models beat the naive baseline, with Poisson regression performing best (about an 8% reduction in MAE).
-- **Starting pitcher handedness** remained statistically significant (p = 0.026): facing a lefty was associated with fewer expected hits, a real, well-documented platoon effect. A hitter's recent hit rate was also significant (p = 0.045).
-- The Random Forest leaned most heavily on the opposing pitcher's recent strikeout and hit rates, followed by the batter's platoon splits.
-- The model's pseudo R² is still low (~0.02), which given how much randomness is in a single game's outcome, is an expected result rather than a sign something's wrong.
+- Both models beat the naive baseline, with Poisson regression performing best (about a 9% reduction in MAE).
+- **Starting pitcher handedness** was the strongest feature (p = 0.001): facing a lefty was associated with fewer expected hits, a real, well-documented platoon effect. A hitter's recent hit rate was borderline (p = 0.068).
+- The Random Forest leaned most heavily on the opposing pitcher's recent strikeout and hit rates, followed by the batter's platoon splits and recent hit rate.
+- The model's pseudo R² is still low (~0.035), which given how much randomness is in a single game's outcome, is an expected result rather than a sign something's wrong.
 
 ## How the model evolved
 
 - With a single-player dataset (~90 usable games), neither model beat the naive baseline, and no feature reached statistical significance which is a sign of too little data rather than a flawed approach.
 - Expanding to the full 9-player lineup let both models beat the baseline for the first time, and pitcher handedness became the first significant feature.
 - Motivated by that result, I added batter-specific platoon splits (hit rate vs. LHP/RHP). I tested a 15-game window for these but kept 7 games, and dropped `batter_rest_days` and `starting_pitcher_rest_days` after they consistently showed low significance and importance.
+- I found that the starting pitcher was mislabeled in about 7% of batter-games: Statcast returns plays newest-first, so taking the "first" pitcher in each game was actually grabbing the pitcher from the batter's last plate appearance, often a reliever. Sorting by `at_bat_number` before aggregating fixed it. Performance relative to the baseline held steady, and pitcher handedness became much more significant (p = 0.026 → 0.001) once the labels were correct.
+- I found that the starting pitcher was mislabeled in ~7% of the batter games. Statcast returns plays by the newest first, so when I took the "first" pitcher in each game, it was grabbing the pitcher from the batter's last PA, which in most situations wasn't a starting pitcher. The fix was to sort by `at_bat_number` before aggregating fixed it. This in turn caused performance of the models relative to the baseline to hold steady whilst pitcher handedness became a much more significant feature (p = 0.026 -> 0.001).
 
 ## Setup
 
